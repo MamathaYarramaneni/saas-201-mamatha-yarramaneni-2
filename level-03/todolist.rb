@@ -19,16 +19,16 @@ class Todo
     Date.today < @due_date
   end
 
-  def text
-    @text
-  end
-
-  def due_date
-    @due_date
-  end
-
-  def completed
-    @completed
+  def to_displayable_string
+    if @due_date == Date.today
+      if @completed
+        return "[X] #{@text}"
+      else
+        return "[ ] #{@text}"
+      end
+    else
+      return "[ ] #{@text} #{@due_date}"
+    end
   end
 end
 
@@ -54,18 +54,8 @@ class TodosList
   end
 
   def to_displayable_list
-    todos_values = @todos
-    display_array = []
-    todos_values.each { |each_todo|
-      if each_todo.due_date == Date.today
-        if display_array[0] == nil
-          display_array.push("[X] #{each_todo.text}")
-        else
-          display_array.push("[ ] #{each_todo.text}")
-        end
-      else
-        display_array.push("[ ] #{each_todo.text} #{each_todo.due_date}")
-      end
+    display_array = @todos.map { |each_todo|
+      each_todo.to_displayable_string
     }
     display_array.join("\n")
   end
