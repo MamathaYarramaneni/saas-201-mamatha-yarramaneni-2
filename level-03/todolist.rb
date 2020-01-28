@@ -38,44 +38,36 @@ class TodosList
   end
 
   def overdue
-    todo_objects = TodosList.new(@todos.filter { |todo| todo.overdue? })
-    display_todos(todo_objects.todos_values)
+    TodosList.new(@todos.filter { |todo| todo.overdue? })
   end
 
   def due_today
-    todo_objects = TodosList.new(@todos.filter { |todo| todo.due_today? })
-    display_today_todos(todo_objects.todos_values)
+    TodosList.new(@todos.filter { |todo| todo.due_today? })
   end
 
   def due_later
-    todo_objects = TodosList.new(@todos.filter { |todo| todo.due_later? })
-    display_todos(todo_objects.todos_values)
-  end
-
-  def todos_values
-    @todos
-  end
-
-  def display_todos(todo)
-    display_string = ""
-    todo.each { |each_todo| display_string.concat("[ ] #{(each_todo.text)} #{(each_todo.due_date)} \n") }
-    display_string
-  end
-
-  def display_today_todos(todo)
-    display_string = ""
-    todo.each { |each_todo|
-      if each_todo == todo[0]
-        display_string.concat("[X] #{(each_todo.text)} \n")
-      else
-        display_string.concat("[ ] #{(each_todo.text)} \n")
-      end
-    }
-    display_string
+    TodosList.new(@todos.filter { |todo| todo.due_later? })
   end
 
   def add(todo)
     @todos.push(todo)
+  end
+
+  def to_displayable_list
+    todos_values = @todos
+    display_array = []
+    todos_values.each { |each_todo|
+      if each_todo.due_date == Date.today
+        if display_array[0] == nil
+          display_array.push("[X] #{each_todo.text}")
+        else
+          display_array.push("[ ] #{each_todo.text}")
+        end
+      else
+        display_array.push("[ ] #{each_todo.text} #{each_todo.due_date}")
+      end
+    }
+    display_array.join("\n")
   end
 end
 
@@ -98,13 +90,13 @@ todos_list.add(Todo.new("Service vehicle", date, false))
 puts "My Todo-list\n\n"
 
 puts "Overdue\n"
-puts todos_list.overdue.to_s
+puts todos_list.overdue.to_displayable_list
 puts "\n\n"
 
 puts "Due Today\n"
-puts todos_list.due_today.to_s
+puts todos_list.due_today.to_displayable_list
 puts "\n\n"
 
 puts "Due Later\n"
-puts todos_list.due_later.to_s
+puts todos_list.due_later.to_displayable_list
 puts "\n\n"
